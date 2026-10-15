@@ -1,0 +1,234 @@
+﻿.emplytic-table-container {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e4e2e4;
+  box-shadow: 0px 4px 20px rgba(11, 25, 46, 0.04);
+  overflow: hidden;
+}
+
+.table-toolbar {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0edef;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.table-search-box {
+  display: flex;
+  align-items: center;
+  background: #f5f3f5;
+  border: 1px solid #e4e2e4;
+  border-radius: 8px;
+  padding: 0 12px;
+  width: 280px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.table-search-box:focus-within {
+  border-color: #3755c3;
+  box-shadow: 0 0 0 3px rgba(55, 85, 195, 0.1);
+  background: #ffffff;
+}
+
+.search-icon {
+  font-size: 18px;
+  color: #75777d;
+  margin-right: 8px;
+}
+
+.table-search-input {
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  color: #1b1b1d;
+  width: 100%;
+  outline: none;
+}
+
+.search-clear-btn {
+  background: transparent;
+  border: none;
+  color: #75777d;
+  cursor: pointer;
+  display: flex;
+  padding: 0;
+}
+
+.search-clear-btn .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.table-record-count {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: #75777d;
+}
+
+.table-responsive-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.emplytic-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  text-align: left;
+}
+
+.emplytic-data-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.emplytic-data-table th.sortable {
+  cursor: pointer;
+}
+
+.emplytic-data-table th.sortable:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.th-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sort-icon {
+  font-size: 16px;
+  color: #94a3b8;
+}
+
+.emplytic-data-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+.emplytic-data-table tr:hover td {
+  background: #f8fafc;
+}
+
+.emplytic-data-table tr.clickable-row {
+  cursor: pointer;
+}
+
+.table-empty-cell {
+  padding: 48px 24px !important;
+  text-align: center;
+}
+
+.empty-table-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+}
+
+.empty-table-state .material-symbols-outlined {
+  font-size: 36px;
+}
+
+.table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.pagination-info {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Common Badges inside tables */
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.risk-badge.low {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.risk-badge.medium {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.risk-badge.high {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.status-chip.ready {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.status-chip.developing {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+.status-chip.not-ready {
+  background: #fef2f2;
+  color: #991b1b;
+}

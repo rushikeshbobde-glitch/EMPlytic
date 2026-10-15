@@ -1,0 +1,83 @@
+﻿.eda-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.eda-summary-banner {
+  background: #0b192e;
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 20px 28px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 8px 24px rgba(11, 25, 46, 0.15);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.summary-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.banner-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #708cfd;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.banner-val {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.eda-section-box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #e4e2e4;
+  box-shadow: 0px 4px 20px rgba(11, 25, 46, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.correlation-table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.correlation-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+}
+
+.correlation-table th,
+.correlation-table td {
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.correlation-table th {
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.corr-feature-label {
+  background: #f8fafc;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+}

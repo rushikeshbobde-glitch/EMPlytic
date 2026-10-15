@@ -1,0 +1,42 @@
+# Python & Virtual Environments
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node & Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# SQLite and Local Databases
+*.db
+*.sqlite3
+
+# Uploads & Generated Outputs (persisted via volumes in Docker/Production)
+backend/uploads/*.csv
+backend/uploads/*.xlsx
+backend/uploads/*.xls
+!backend/uploads/raw_employee_attrition_dataset.csv
+backend/reports/*.pdf
+backend/reports/*.xlsx
+backend/reports/*.html
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.log
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

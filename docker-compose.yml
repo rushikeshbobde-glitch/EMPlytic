@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: emplytic-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: emplytic
+      POSTGRES_PASSWORD: emplytic_password
+      POSTGRES_DB: emplytic_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U emplytic -d emplytic_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: emplytic-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://emplytic:emplytic_password@postgres:5432/emplytic_db
+      - DEMO_MODE=true
+      - JWT_SECRET=emplytic-super-secret-key-change-in-production
+      - ALLOWED_ORIGINS=http://localhost,http://localhost:80,http://127.0.0.1,http://127.0.0.1:80,http://localhost:5173,http://127.0.0.1:5173
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/models:/app/models
+      - ./backend/reports:/app/reports
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=
+    container_name: emplytic-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+
+volumes:
+  postgres_data:

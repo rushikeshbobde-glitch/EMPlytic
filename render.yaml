@@ -1,0 +1,49 @@
+services:
+  # 1. FastAPI Backend Service
+  - type: web
+    name: emplytic-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DEMO_MODE
+        value: "true"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: "*"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: emplytic-db
+          property: connectionString
+
+  # 2. React Frontend Static Site
+  - type: web
+    name: emplytic-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    autoDeploy: true
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: emplytic-backend
+          property: url
+
+databases:
+  # Managed PostgreSQL Database
+  - name: emplytic-db
+    databaseName: emplytic_db
+    user: emplytic
+    plan: free

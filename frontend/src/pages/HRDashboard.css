@@ -1,0 +1,38 @@
+﻿.dashboard-table-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #e4e2e4;
+  box-shadow: 0px 4px 20px rgba(11, 25, 46, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.table-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.text-navy {
+  color: #0b192e;
+}
+
+.view-all-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #1e40af;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  transition: gap 0.2s ease;
+}
+
+.view-all-link:hover {
+  gap: 8px;
+  text-decoration: underline;
+}

@@ -1,0 +1,115 @@
+.emplytic-stat-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid #e4e2e4;
+  box-shadow: 0px 4px 20px rgba(11, 25, 46, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.emplytic-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 8px 24px rgba(11, 25, 46, 0.08);
+  border-color: #c5c6cd;
+}
+
+.emplytic-stat-card.clickable {
+  cursor: pointer;
+}
+
+.stat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.stat-title {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #75777d;
+  text-transform: uppercase;
+}
+
+.stat-icon-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.stat-icon-wrapper .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.stat-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-value {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0b192e;
+  line-height: 32px;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.stat-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.trend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.trend-pill.up {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.trend-pill.down {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.trend-pill.warning {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.trend-pill.neutral {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.trend-icon {
+  font-size: 14px;
+}
+
+.stat-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: #75777d;
+}
