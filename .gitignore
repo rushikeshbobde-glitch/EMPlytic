@@ -25,6 +25,7 @@ backend/uploads/*.csv
 backend/uploads/*.xlsx
 backend/uploads/*.xls
 !backend/uploads/raw_employee_attrition_dataset.csv
+!backend/uploads/raw_HR Data.xlsx - HR data.csv
 backend/reports/*.pdf
 backend/reports/*.xlsx
 backend/reports/*.html

@@ -71,7 +71,7 @@ export default function AIDashboard() {
           <p>
             {isNonHr
               ? data?.message || "The active dataset does not contain workforce or employee columns (Department, Role, Salary, Performance, etc.). Machine learning pipelines for retention and promotion require an employee dataset."
-              : "No dataset has been uploaded yet. Please upload an employee dataset (CSV or Excel) to train Attrition classifiers, compute Performance indices, and run KMeans clustering."}
+              : error || "No dataset has been uploaded yet. Please upload an employee dataset (CSV or Excel) to train Attrition classifiers, compute Performance indices, and run KMeans clustering."}
           </p>
           <div style={{ display: "flex", gap: "12px", justifyContent: "center", marginTop: "16px" }}>
             <Link to="/data-upload" className="btn-primary">

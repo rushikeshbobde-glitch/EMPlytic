@@ -28,6 +28,7 @@ async def lifespan(app: FastAPI):
     db = SessionLocal()
     try:
         init_demo_users(db)
+        seed_demo_dataset_if_needed(db)
     finally:
         db.close()
     yield
