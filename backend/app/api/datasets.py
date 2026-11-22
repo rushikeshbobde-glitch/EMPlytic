@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import UPLOAD_DIR
 from app.db.database import get_db
-from app.db.models import DatasetMetadata, DatasetColumn, DataQuality, AuditLog
+from app.db.models import DatasetMetadata, DatasetColumn, DataQuality, AuditLog, User
 from app.core.security import get_current_user, require_hr
 from app.services.data_cleaning import clean_dataset
 from app.services.eda_service import generate_eda_report, detect_all_semantic_columns, detect_semantic_column
