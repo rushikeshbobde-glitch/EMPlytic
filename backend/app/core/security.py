@@ -1,13 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional, List
 import bcrypt
-
-# Fix for passlib reading bcrypt.__about__.__version__ in bcrypt >= 4.0.0
-if not hasattr(bcrypt, "__about__"):
-    bcrypt.__about__ = type("about", (), {"__version__": getattr(bcrypt, "__version__", "4.0.0")})
-
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -15,11 +9,6 @@ from sqlalchemy.orm import Session
 from app.core.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from app.db.database import get_db
 from app.db.models import User
-
-pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto"
-)
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/auth/login",
@@ -38,11 +27,15 @@ def normalize_role(role: str) -> str:
     return "HR_USER"
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    pwd_bytes = password.encode("utf-8")[:72]
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(pwd_bytes, salt).decode("utf-8")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     try:
-        return pwd_context.verify(plain_password, hashed_password)
+        pwd_bytes = plain_password.encode("utf-8")[:72]
+        hash_bytes = hashed_password.encode("utf-8")
+        return bcrypt.checkpw(pwd_bytes, hash_bytes)
     except Exception:
         return False
 
