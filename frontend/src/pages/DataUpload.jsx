@@ -190,13 +190,9 @@ export default function DataUpload() {
                 <div className="dropzone-icon-circle">
                   <span className="material-symbols-outlined">cloud_upload</span>
                 </div>
-                <h4>Drag & Drop your CSV or Excel file here</h4>
-                <p>or click anywhere in this box to browse local files</p>
-                <div className="supported-formats-pills">
-                  <span>.CSV</span>
-                  <span>.XLSX</span>
-                  <span>.XLS</span>
-                </div>
+                <h4>Drag & drop your file here</h4>
+                <p>or <span style={{ color: "#2563eb", fontWeight: "600" }}>click to browse</span></p>
+                <span className="dropzone-format-subtext">Supports: CSV, XLSX (Max size: 50MB)</span>
               </div>
             ) : (
               <div className="dropzone-file-preview">
@@ -250,6 +246,106 @@ export default function DataUpload() {
                 <span>{cleaning ? "Cleaning Pipeline Running..." : "Auto-Clean Dataset"}</span>
               </button>
             )}
+          </div>
+
+          {/* Recent Uploads Table (Screen 6) */}
+          <div className="recent-uploads-section">
+            <div className="recent-uploads-header">
+              <h4>Recent Uploads</h4>
+              <span className="recent-uploads-count">3 files logged</span>
+            </div>
+            <div className="recent-uploads-table-wrapper">
+              <table className="recent-uploads-table">
+                <thead>
+                  <tr>
+                    <th>File Name</th>
+                    <th>Uploaded On</th>
+                    <th>Status</th>
+                    <th style={{ textAlign: "right" }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div className="table-file-cell">
+                        <span className="material-symbols-outlined file-cell-icon text-blue">description</span>
+                        <span className="font-semibold text-navy">employees_data_2024.csv</span>
+                      </div>
+                    </td>
+                    <td>15 mins ago</td>
+                    <td>
+                      <span className="upload-status-pill completed">
+                        <span className="material-symbols-outlined icon-tiny">check_circle</span>
+                        Completed
+                      </span>
+                    </td>
+                    <td style={{ textAlign: "right" }}>
+                      <div className="table-actions-group">
+                        <button className="table-icon-btn" title="View EDA" onClick={() => navigate("/eda")}>
+                          <span className="material-symbols-outlined">visibility</span>
+                        </button>
+                        <button className="table-icon-btn" title="Inspect Quality" onClick={() => navigate("/data-validation")}>
+                          <span className="material-symbols-outlined">refresh</span>
+                        </button>
+                        <button className="table-icon-btn" title="Download Reports" onClick={() => navigate("/reports")}>
+                          <span className="material-symbols-outlined">download</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div className="table-file-cell">
+                        <span className="material-symbols-outlined file-cell-icon text-cyan">table_view</span>
+                        <span className="font-semibold text-navy">hr_analytics_q3.xlsx</span>
+                      </div>
+                    </td>
+                    <td>2 hours ago</td>
+                    <td>
+                      <span className="upload-status-pill validated">
+                        <span className="material-symbols-outlined icon-tiny">verified</span>
+                        Validated
+                      </span>
+                    </td>
+                    <td style={{ textAlign: "right" }}>
+                      <div className="table-actions-group">
+                        <button className="table-icon-btn" title="View EDA" onClick={() => navigate("/eda")}>
+                          <span className="material-symbols-outlined">visibility</span>
+                        </button>
+                        <button className="table-icon-btn" title="Inspect Quality" onClick={() => navigate("/data-validation")}>
+                          <span className="material-symbols-outlined">refresh</span>
+                        </button>
+                        <button className="table-icon-btn" title="Download Reports" onClick={() => navigate("/reports")}>
+                          <span className="material-symbols-outlined">download</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div className="table-file-cell">
+                        <span className="material-symbols-outlined file-cell-icon text-amber">article</span>
+                        <span className="font-semibold text-navy">sample_data.csv</span>
+                      </div>
+                    </td>
+                    <td>Yesterday</td>
+                    <td>
+                      <span className="upload-status-pill failed">
+                        <span className="material-symbols-outlined icon-tiny">error</span>
+                        Failed
+                      </span>
+                    </td>
+                    <td style={{ textAlign: "right" }}>
+                      <div className="table-actions-group">
+                        <button className="table-icon-btn" title="Retry Upload" onClick={() => fileInputRef.current.click()}>
+                          <span className="material-symbols-outlined">refresh</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 

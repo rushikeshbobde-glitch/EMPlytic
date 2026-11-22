@@ -233,9 +233,74 @@ def clean_active_dataset(
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error cleaning dataset: {str(e)}")
 
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Error cleaning dataset: {str(e)}")
+@router.get("/cleaning-comparison")
+def get_cleaning_comparison(
+    dataset_id: Optional[int] = None,
+    current_user: Optional[User] = Depends(require_hr),
+    db: Session = Depends(get_db)
+):
+    """
+    Returns comparative data preview and metrics before cleaning vs after cleaning.
+    """
+    if dataset_id:
+        meta = db.query(DatasetMetadata).filter(DatasetMetadata.id == dataset_id).first()
+    else:
+        meta = db.query(DatasetMetadata).order_by(DatasetMetadata.id.desc()).first()
+
+    if not meta or not meta.file_path or not os.path.exists(meta.file_path):
+        raise HTTPException(status_code=404, detail="No active dataset available.")
+
+    raw_df = read_file_to_df(meta.file_path)
+
+    # Check if cleaned file exists, otherwise clean on the fly
+    if meta.is_cleaned and meta.cleaned_file_path and os.path.exists(meta.cleaned_file_path):
+        cleaned_df = read_file_to_df(meta.cleaned_file_path)
+        cleaning_summary = {
+            "rows_before": meta.total_rows,
+            "rows_after": len(cleaned_df),
+            "missing_before": meta.missing_count,
+            "missing_after": int(cleaned_df.isnull().sum().sum()),
+            "duplicates_removed": meta.duplicate_count,
+            "columns_modified": [
+                "Column headers trimmed and whitespace normalized",
+                "Duplicate records dropped",
+                "Numeric and currency symbols parsed to numbers",
+                "Missing values imputed using statistical medians and modes"
+            ]
+        }
+    else:
+        cleaned_df, cleaning_summary = clean_dataset(raw_df)
+
+    # Convert samples to JSON-serializable list of dicts (handling NaN, inf)
+    raw_sample = raw_df.head(20).replace({np.nan: "NULL", np.inf: None, -np.inf: None}).to_dict(orient="records")
+    cleaned_sample = cleaned_df.head(20).replace({np.nan: "NULL", np.inf: None, -np.inf: None}).to_dict(orient="records")
+
+    columns = list(raw_df.columns[:15])
+
+    return {
+        "success": True,
+        "dataset_id": meta.id,
+        "filename": meta.filename,
+        "is_cleaned": meta.is_cleaned,
+        "metrics_before": {
+            "rows": len(raw_df),
+            "columns": len(raw_df.columns),
+            "missing_values": int(raw_df.isnull().sum().sum()),
+            "duplicate_records": int(raw_df.duplicated().sum()),
+            "quality_score": round(max(0.0, 100.0 - (raw_df.isnull().sum().sum() / max(1, len(raw_df) * len(raw_df.columns)) * 100)), 1)
+        },
+        "metrics_after": {
+            "rows": len(cleaned_df),
+            "columns": len(cleaned_df.columns),
+            "missing_values": int(cleaned_df.isnull().sum().sum()),
+            "duplicate_records": 0,
+            "quality_score": round(max(0.0, 100.0 - (cleaned_df.isnull().sum().sum() / max(1, len(cleaned_df) * len(cleaned_df.columns)) * 100)), 1)
+        },
+        "summary": cleaning_summary,
+        "columns": columns,
+        "raw_sample": raw_sample,
+        "cleaned_sample": cleaned_sample
+    }
 
 @router.get("/summary")
 def get_dataset_summary(

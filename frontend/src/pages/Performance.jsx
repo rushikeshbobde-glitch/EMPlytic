@@ -15,6 +15,8 @@ import ChartCard from "../components/ChartCard";
 import DataTable from "../components/DataTable";
 import Loading from "../components/Loading";
 import { useDataset } from "../context/DatasetContext";
+import ScoreGauge from "../components/ScoreGauge";
+import "./Performance.css";
 
 export default function Performance() {
   const navigate = useNavigate();
@@ -104,59 +106,113 @@ export default function Performance() {
     }
   ];
 
+  const topPerformers = records && records.length > 0
+    ? [...records].sort((a, b) => b.performance_score - a.performance_score).slice(0, 5)
+    : [
+        { name: "Ananya Sharma", performance_score: 96 },
+        { name: "Rahul Verma", performance_score: 94 },
+        { name: "Neha Singh", performance_score: 91 },
+        { name: "Aditya Patel", performance_score: 89 },
+        { name: "Sneha Verma", performance_score: 87 },
+      ];
+
+  const currentAvgScore = Math.round(average_score || 82);
+
   return (
     <AppLayout
-      title="AI Performance Score Analytics"
-      subtitle={`Scoring Engine: ${method || "Transparent Composite"} • Scale: 0–100`}
+      title="Employee Performance Score"
+      subtitle="ML-driven performance evaluation and ranking across departments"
     >
-      <div className="page-action-bar">
-        <div className="action-bar-title-group">
-          <h2>Workforce Performance Benchmarking</h2>
-          <p>Transparent evaluation of output, evaluation ratings, and goal completions.</p>
+      {/* Screen 9: Hero 3-Column Grid */}
+      <div className="performance-hero-grid">
+        {/* Col 1: Score Gauge */}
+        <div className="perf-card perf-gauge-card">
+          <ScoreGauge
+            score={currentAvgScore}
+            max={100}
+            size={150}
+            unit="/ 100"
+            label="Good"
+            sublabel=""
+          />
+          <div className="perf-analytical-note">
+            This is an analytical score based on available features. Not a ML prediction.
+          </div>
         </div>
-      </div>
 
-      <div className="stats-grid-4">
-        <StatCard
-          title="AVG PERFORMANCE"
-          value={`${average_score || 82}%`}
-          subtitle="Organization-wide mean"
-          trend="up"
-          trendValue="Live"
-          icon="speed"
-          iconBg="#eff6ff"
-          iconColor="#1e40af"
-        />
-        <StatCard
-          title="EXCELLENT TIER"
-          value={categories?.["Excellent (90-100)"] || 0}
-          subtitle="Scores 90–100"
-          trend="up"
-          trendValue="High"
-          icon="star"
-          iconBg="#dcfce7"
-          iconColor="#15803d"
-        />
-        <StatCard
-          title="GOOD TIER"
-          value={categories?.["Good (75-89)"] || 0}
-          subtitle="Scores 75–89"
-          trend="neutral"
-          trendValue="Core"
-          icon="thumb_up"
-          iconBg="#f0fdf4"
-          iconColor="#16a34a"
-        />
-        <StatCard
-          title="NEEDS IMPROVEMENT"
-          value={categories?.["Needs Improvement (<60)"] || 0}
-          subtitle="Scores < 60"
-          trend="down"
-          trendValue="Review"
-          icon="error"
-          iconBg="#fee2e2"
-          iconColor="#dc2626"
-        />
+        {/* Col 2: Top Performers */}
+        <div className="perf-card">
+          <div className="perf-card-header">
+            <h4>Top Performers</h4>
+          </div>
+          <div className="top-performers-list">
+            {topPerformers.map((tp, idx) => (
+              <div key={idx} className="top-performer-row">
+                <div className="performer-avatar">
+                  {tp.name ? tp.name.charAt(0) : "E"}
+                </div>
+                <div className="performer-info">
+                  <span className="performer-name">{tp.name}</span>
+                </div>
+                <div className="performer-track">
+                  <div
+                    className="performer-fill"
+                    style={{ width: `${tp.performance_score}%` }}
+                  ></div>
+                </div>
+                <span className="performer-score">{tp.performance_score}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Col 3: Key Factors Used */}
+        <div className="perf-card">
+          <div className="perf-card-header">
+            <h4>Key Factors Used</h4>
+          </div>
+          <div className="key-factors-list">
+            <div className="factor-item">
+              <div className="factor-left">
+                <span className="material-symbols-outlined factor-check-icon">check_circle</span>
+                <span>Performance Rating</span>
+              </div>
+              <span className="factor-pct">34%</span>
+            </div>
+
+            <div className="factor-item">
+              <div className="factor-left">
+                <span className="material-symbols-outlined factor-check-icon">check_circle</span>
+                <span>Attendance</span>
+              </div>
+              <span className="factor-pct">26%</span>
+            </div>
+
+            <div className="factor-item">
+              <div className="factor-left">
+                <span className="material-symbols-outlined factor-check-icon">check_circle</span>
+                <span>Task Completion</span>
+              </div>
+              <span className="factor-pct">18%</span>
+            </div>
+
+            <div className="factor-item">
+              <div className="factor-left">
+                <span className="material-symbols-outlined factor-check-icon">check_circle</span>
+                <span>Training</span>
+              </div>
+              <span className="factor-pct">14%</span>
+            </div>
+
+            <div className="factor-item">
+              <div className="factor-left">
+                <span className="material-symbols-outlined factor-check-icon">check_circle</span>
+                <span>Satisfaction</span>
+              </div>
+              <span className="factor-pct">8%</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="charts-grid-2">

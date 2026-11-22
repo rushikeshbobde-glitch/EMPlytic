@@ -1,4 +1,4 @@
-﻿.empty-dataset-card {
+.empty-dataset-card {
   background: #ffffff;
   border-radius: 16px;
   padding: 64px 32px;
@@ -158,3 +158,230 @@
   font-size: 12px;
   color: #64748b;
 }
+
+/* Screen 7: Data Quality 3-Card Row */
+.quality-overview-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+  .quality-overview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.quality-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(11, 25, 46, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.quality-card.gauge-card {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.quality-card-header {
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.quality-card-header h4 {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0b192e;
+  margin: 0;
+}
+
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.summary-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.summary-val {
+  color: #0b192e;
+  font-weight: 700;
+}
+
+.quality-status-badge {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.quality-status-badge.good {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.status-bars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.status-bar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.status-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.status-bar-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-dot.green { background: #10b981; }
+.status-dot.blue { background: #0284c7; }
+.status-dot.amber { background: #f59e0b; }
+.status-dot.red { background: #ef4444; }
+
+.status-bar-pct {
+  font-weight: 700;
+  color: #0b192e;
+}
+
+.status-bar-track {
+  width: 100%;
+  height: 7px;
+  background: #f1f5f9;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.status-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.status-bar-fill.green { background: #10b981; }
+.status-bar-fill.blue { background: #0284c7; }
+.status-bar-fill.amber { background: #f59e0b; }
+.status-bar-fill.red { background: #ef4444; }
+
+/* Screen 7: Top Issues Detected */
+.top-issues-section {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(11, 25, 46, 0.04);
+  margin-bottom: 24px;
+}
+
+.top-issues-table-wrapper {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+.top-issues-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.top-issues-table th {
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.top-issues-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.top-issues-table tr:last-child td {
+  border-bottom: none;
+}
+
+.issue-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.issue-icon {
+  font-size: 18px;
+}
+
+.issue-icon.amber { color: #d97706; }
+.issue-icon.yellow { color: #eab308; }
+.issue-icon.blue { color: #2563eb; }
+
+.issue-severity-pill {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.issue-severity-pill.high {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.issue-severity-pill.medium {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.issue-severity-pill.low {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+

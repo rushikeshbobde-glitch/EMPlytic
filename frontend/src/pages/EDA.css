@@ -1,4 +1,4 @@
-﻿.eda-page-wrapper {
+.eda-page-wrapper {
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -81,3 +81,242 @@
   color: #1e293b;
   white-space: nowrap;
 }
+
+/* Screen 8: Subtabs */
+.eda-subtabs-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 12px;
+}
+
+.eda-subtab-btn {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.eda-subtab-btn:hover {
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.eda-subtab-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+/* Screen 8: Filter Bar */
+.eda-filter-bar {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 8px rgba(11, 25, 46, 0.02);
+}
+
+.eda-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eda-filter-group label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.eda-filter-group select {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  min-width: 140px;
+}
+
+.eda-reset-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.eda-reset-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.eda-reset-btn .material-symbols-outlined {
+  font-size: 16px;
+}
+
+/* Screen 8: 3x2 Grid */
+.eda-grid-3x2 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1200px) {
+  .eda-grid-3x2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .eda-grid-3x2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.eda-visual-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(11, 25, 46, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.eda-visual-card-header {
+  margin-bottom: 16px;
+}
+
+.eda-visual-card-header h4 {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0b192e;
+  margin: 0;
+}
+
+.eda-visual-card-header p {
+  font-size: 12px;
+  color: #64748b;
+  margin: 4px 0 0 0;
+}
+
+/* Heatmap Grid */
+.eda-heatmap-wrapper {
+  overflow-x: auto;
+}
+
+.eda-heatmap-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: center;
+}
+
+.eda-heatmap-table th,
+.eda-heatmap-table td {
+  padding: 8px 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.eda-heatmap-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.heatmap-row-header {
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 600;
+  text-align: left;
+  padding-left: 8px !important;
+}
+
+/* Donut Legend */
+.eda-donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 45%;
+  font-size: 12px;
+}
+
+.donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-dept-name {
+  color: #475569;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.legend-dept-pct {
+  color: #0b192e;
+  font-weight: 700;
+}
+
+/* Key Insights */
+.eda-insights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eda-insight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.5;
+  padding: 8px 10px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+.insight-bullet-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+

@@ -34,7 +34,24 @@ export default function Header({ title, subtitle, onMenuToggle }) {
           <h1 className="header-main-title">{title || (isEmployee ? "Employee Portal" : "Workforce Intelligence")}</h1>
           {subtitle && <p className="header-subtitle">{subtitle}</p>}
         </div>
+
+        {/* Global Search Bar as shown in reference design */}
+        {!isEmployee && (
+          <div className="header-search-bar hidden lg:flex">
+            <span className="material-symbols-outlined search-icon">search</span>
+            <input
+              type="text"
+              placeholder="Search employees, departments..."
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && e.target.value.trim()) {
+                  navigate(`/employees?search=${encodeURIComponent(e.target.value.trim())}`);
+                }
+              }}
+            />
+          </div>
+        )}
       </div>
+
 
       <div className="header-right">
         {isEmployee ? (
@@ -137,16 +154,23 @@ export default function Header({ title, subtitle, onMenuToggle }) {
           </div>
         )}
 
-        <div className="header-user-badge">
+        {/* Notification Bell */}
+        <button className="header-notification-btn" title="View Notifications" onClick={() => navigate(isEmployee ? "/employee/dashboard" : "/settings")}>
+          <span className="material-symbols-outlined">notifications</span>
+          <span className="notification-dot"></span>
+        </button>
+
+        <div className="header-user-badge" onClick={() => navigate(isEmployee ? "/employee/dashboard" : "/settings")} style={{ cursor: "pointer" }} title="View Profile">
           <div className="header-avatar">
             {user?.name ? user.name.charAt(0).toUpperCase() : (isEmployee ? "E" : "A")}
           </div>
           <div className="header-user-info hidden sm:flex">
-            <span className="header-name">{user?.name || (isEmployee ? "Employee" : "HR Admin")}</span>
-            <span className="header-role">{user?.role?.toUpperCase() || (isEmployee ? "EMPLOYEE" : "HR")}</span>
+            <span className="header-name">{user?.name || (isEmployee ? "Ananya Sharma" : "Priya Sharma")}</span>
+            <span className="header-role">{user?.role?.toUpperCase() || (isEmployee ? "EMPLOYEE" : "HR ADMIN")}</span>
           </div>
         </div>
       </div>
     </header>
   );
+
 }

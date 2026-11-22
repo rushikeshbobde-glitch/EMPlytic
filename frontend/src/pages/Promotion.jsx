@@ -5,6 +5,7 @@ import StatCard from "../components/StatCard";
 import DataTable from "../components/DataTable";
 import Loading from "../components/Loading";
 import { useDataset } from "../context/DatasetContext";
+import ScoreGauge from "../components/ScoreGauge";
 
 export default function Promotion() {
   const navigate = useNavigate();
@@ -107,49 +108,96 @@ export default function Promotion() {
     }
   ];
 
+  const avgReadyScore = 68;
+
   return (
     <AppLayout
-      title="Promotion Readiness & Succession Planning"
+      title="Promotion Readiness"
       subtitle={`Engine: ${method || "Explainable Multi-Factor Model"}`}
     >
-      <div className="page-action-bar">
-        <div className="action-bar-title-group">
-          <h2>Succession Pipeline & Leadership Readiness</h2>
-          <p>Identifies employees exhibiting accelerated performance, tenure depth, and core competency mastery.</p>
+      {/* Screen 12: Hero 2-Column Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "300px 1fr", gap: "20px", marginBottom: "24px" }}>
+        {/* Left Card: Score Gauge */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", padding: "24px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px rgba(11,25,46,0.04)", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+          <ScoreGauge
+            score={avgReadyScore}
+            max={100}
+            size={150}
+            unit="/ 100"
+            label="Developing"
+            color="#f59e0b"
+          />
+          <div style={{ marginTop: "12px", display: "flex", alignItems: "center", gap: "8px", fontSize: "13px" }}>
+            <span style={{ color: "#64748b" }}>Readiness Level:</span>
+            <span style={{ background: "#fef3c7", color: "#b45309", padding: "2px 10px", borderRadius: "12px", fontWeight: "700", border: "1px solid #fde68a" }}>
+              Developing
+            </span>
+          </div>
+          <div style={{ fontSize: "11px", color: "#64748b", marginTop: "14px", lineHeight: "1.4", padding: "8px 12px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #f1f5f9" }}>
+            This is an analytical score based on available features. Not a ML prediction.
+          </div>
         </div>
-      </div>
 
-      <div className="stats-grid-3">
-        <StatCard
-          title="PROMOTION READY"
-          value={readiness_distribution?.Ready || 0}
-          subtitle="Score >= 75.0"
-          trend="up"
-          trendValue="Ready Now"
-          icon="military_tech"
-          iconBg="#dcfce7"
-          iconColor="#15803d"
-        />
-        <StatCard
-          title="DEVELOPING TALENT"
-          value={readiness_distribution?.Developing || 0}
-          subtitle="Score 55.0–74.9"
-          trend="neutral"
-          trendValue="Pipeline"
-          icon="trending_up"
-          iconBg="#eff6ff"
-          iconColor="#1e40af"
-        />
-        <StatCard
-          title="NOT READY"
-          value={readiness_distribution?.["Not Ready"] || 0}
-          subtitle="Score < 55.0"
-          trend="down"
-          trendValue="Early Stage"
-          icon="hourglass_empty"
-          iconBg="#f5f3f5"
-          iconColor="#75777d"
-        />
+        {/* Right Card: Key Factors */}
+        <div style={{ background: "#ffffff", borderRadius: "16px", padding: "24px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px rgba(11,25,46,0.04)", display: "flex", flexDirection: "column" }}>
+          <div style={{ marginBottom: "16px", paddingBottom: "8px", borderBottom: "1px solid #f1f5f9" }}>
+            <h4 style={{ margin: 0, fontFamily: "Hanken Grotesk, sans-serif", fontSize: "16px", fontWeight: "700", color: "#0b192e" }}>
+              Key Factors
+            </h4>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", marginBottom: "6px" }}>
+                <span style={{ fontWeight: "600", color: "#334155" }}>Experience</span>
+                <span style={{ fontWeight: "700", color: "#0b192e" }}>32%</span>
+              </div>
+              <div style={{ width: "100%", height: "7px", background: "#f1f5f9", borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ width: "32%", height: "100%", background: "#2563eb", borderRadius: "4px" }}></div>
+              </div>
+            </div>
+
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", marginBottom: "6px" }}>
+                <span style={{ fontWeight: "600", color: "#334155" }}>Rating</span>
+                <span style={{ fontWeight: "700", color: "#0b192e" }}>24%</span>
+              </div>
+              <div style={{ width: "100%", height: "7px", background: "#f1f5f9", borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ width: "24%", height: "100%", background: "#10b981", borderRadius: "4px" }}></div>
+              </div>
+            </div>
+
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", marginBottom: "6px" }}>
+                <span style={{ fontWeight: "600", color: "#334155" }}>Training</span>
+                <span style={{ fontWeight: "700", color: "#0b192e" }}>18%</span>
+              </div>
+              <div style={{ width: "100%", height: "7px", background: "#f1f5f9", borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ width: "18%", height: "100%", background: "#38bdf8", borderRadius: "4px" }}></div>
+              </div>
+            </div>
+
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", marginBottom: "6px" }}>
+                <span style={{ fontWeight: "600", color: "#334155" }}>Skills</span>
+                <span style={{ fontWeight: "700", color: "#0b192e" }}>14%</span>
+              </div>
+              <div style={{ width: "100%", height: "7px", background: "#f1f5f9", borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ width: "14%", height: "100%", background: "#8b5cf6", borderRadius: "4px" }}></div>
+              </div>
+            </div>
+
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", marginBottom: "6px" }}>
+                <span style={{ fontWeight: "600", color: "#334155" }}>Tenure</span>
+                <span style={{ fontWeight: "700", color: "#0b192e" }}>12%</span>
+              </div>
+              <div style={{ width: "100%", height: "7px", background: "#f1f5f9", borderRadius: "4px", overflow: "hidden" }}>
+                <div style={{ width: "12%", height: "100%", background: "#f59e0b", borderRadius: "4px" }}></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="ai-section-card">

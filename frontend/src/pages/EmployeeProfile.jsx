@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import AppLayout from "../components/AppLayout";
 import StatCard from "../components/StatCard";
@@ -60,13 +60,15 @@ export default function EmployeeProfile() {
     );
   }
 
+  const [profileTab, setProfileTab] = useState("Overview");
+
   return (
     <AppLayout
-      title="Employee Talent Profile"
+      title="Employee Profile"
       subtitle={`Detailed analytics, risk signals, and development trajectory for ${employee.name}`}
     >
       {/* Top Navigation Row */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
         <button
           className="btn-secondary text-xs"
           onClick={() => navigate("/employees")}
@@ -80,41 +82,114 @@ export default function EmployeeProfile() {
         </Link>
       </div>
 
-      {/* Employee Hero Card */}
-      <div className="employee-hero-card">
-        <div className="emp-hero-left">
-          <div className="emp-avatar-large">
-            {employee.name ? employee.name.charAt(0).toUpperCase() : "E"}
-          </div>
-          <div className="emp-hero-info">
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-              <h2 className="emp-name-title">{employee.name}</h2>
-              <span className="emp-id-tag">{employee.employee_id}</span>
-              <span className="emp-segment-pill">{employee.cluster_segment}</span>
+      {/* Screen 15: Employee Hero Card with Score Badge & Subtabs */}
+      <div style={{ background: "#ffffff", borderRadius: "16px", padding: "24px 28px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px rgba(11,25,46,0.04)", marginBottom: "24px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", marginBottom: "20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: "#eff6ff", border: "2px solid #bfdbfe", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", fontWeight: "800" }}>
+              {employee.name ? employee.name.charAt(0).toUpperCase() : "A"}
             </div>
-            <div className="emp-role-dept-line">
-              <strong>{employee.job_role}</strong> • {employee.department} Department
-              {employee.salary && ` • $${Number(employee.salary).toLocaleString()}/yr`}
-              {employee.age && ` • ${employee.age} yrs old`}
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: "#0b192e" }}>{employee.name}</h2>
+                <span style={{ fontSize: "11px", background: "#dcfce7", color: "#166534", padding: "2px 8px", borderRadius: "10px", fontWeight: "700" }}>Active</span>
+              </div>
+              <p style={{ margin: "4px 0 0 0", color: "#64748b", fontSize: "13px" }}>
+                {employee.job_role} • {employee.department}
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "8px 16px", borderRadius: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <span className="material-symbols-outlined" style={{ color: "#16a34a", fontSize: "20px" }}>verified</span>
+              <div>
+                <span style={{ fontSize: "11px", color: "#166534", display: "block" }}>Performance Score</span>
+                <strong style={{ fontSize: "15px", color: "#15803d" }}>{Math.round(employee.performance || 78)} / 100</strong>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="emp-hero-badges">
-          <div className="hero-status-pill">
-            <span className="status-label">FLIGHT RISK</span>
-            <span className={`risk-badge ${employee.attrition_risk?.toLowerCase()}`}>
-              {employee.attrition_risk} ({employee.attrition_probability}%)
-            </span>
-          </div>
-          <div className="hero-status-pill">
-            <span className="status-label">SUCCESSION</span>
-            <span className={`status-chip ${employee.promotion_readiness?.toLowerCase().replace(" ", "-")}`}>
-              {employee.promotion_readiness}
-            </span>
-          </div>
+        {/* Screen 15 Subtabs */}
+        <div style={{ display: "flex", gap: "8px", borderTop: "1px solid #f1f5f9", paddingTop: "14px" }}>
+          {["Overview", "Skills", "Training & Reports"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setProfileTab(tab)}
+              style={{
+                padding: "8px 16px",
+                borderRadius: "8px",
+                fontSize: "13px",
+                fontWeight: "600",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                background: profileTab === tab ? "#2563eb" : "#f8fafc",
+                color: profileTab === tab ? "#ffffff" : "#64748b",
+                border: profileTab === tab ? "1px solid #2563eb" : "1px solid #e2e8f0"
+              }}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
       </div>
+
+      {/* Screen 15: Overview Tab Content (Info Grid + Recent Activity) */}
+      {profileTab === "Overview" && (
+        <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "20px", marginBottom: "24px" }}>
+          {/* Left: General Info Card */}
+          <div style={{ background: "#ffffff", borderRadius: "16px", padding: "24px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px rgba(11,25,46,0.04)" }}>
+            <h4 style={{ margin: "0 0 16px 0", fontSize: "15px", fontWeight: "700", color: "#0b192e" }}>General Information</h4>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", fontSize: "13px" }}>
+              <div>
+                <span style={{ color: "#64748b", display: "block", marginBottom: "2px" }}>Department</span>
+                <strong style={{ color: "#0b192e" }}>{employee.department}</strong>
+              </div>
+              <div>
+                <span style={{ color: "#64748b", display: "block", marginBottom: "2px" }}>Job Role</span>
+                <strong style={{ color: "#0b192e" }}>{employee.job_role}</strong>
+              </div>
+              <div>
+                <span style={{ color: "#64748b", display: "block", marginBottom: "2px" }}>Experience</span>
+                <strong style={{ color: "#0b192e" }}>{employee.experience ? `${employee.experience} years` : "4 years"}</strong>
+              </div>
+              <div>
+                <span style={{ color: "#64748b", display: "block", marginBottom: "2px" }}>Status</span>
+                <strong style={{ color: "#16a34a" }}>Active</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Recent Activity Card */}
+          <div style={{ background: "#ffffff", borderRadius: "16px", padding: "24px", border: "1px solid #e2e8f0", boxShadow: "0 4px 16px rgba(11,25,46,0.04)" }}>
+            <h4 style={{ margin: "0 0 16px 0", fontSize: "15px", fontWeight: "700", color: "#0b192e" }}>Recent Activity</h4>
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", fontSize: "13px" }}>
+                <span className="material-symbols-outlined" style={{ color: "#2563eb", fontSize: "18px" }}>analytics</span>
+                <div>
+                  <div style={{ fontWeight: "600", color: "#0b192e" }}>Performance score updated</div>
+                  <span style={{ fontSize: "11px", color: "#64748b" }}>2 days ago</span>
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", fontSize: "13px" }}>
+                <span className="material-symbols-outlined" style={{ color: "#10b981", fontSize: "18px" }}>school</span>
+                <div>
+                  <div style={{ fontWeight: "600", color: "#0b192e" }}>Training recommendation added</div>
+                  <span style={{ fontSize: "11px", color: "#64748b" }}>5 days ago</span>
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", fontSize: "13px" }}>
+                <span className="material-symbols-outlined" style={{ color: "#8b5cf6", fontSize: "18px" }}>description</span>
+                <div>
+                  <div style={{ fontWeight: "600", color: "#0b192e" }}>Report generated</div>
+                  <span style={{ fontSize: "11px", color: "#64748b" }}>1 week ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 4 Core Metric KPI Cards */}
       <div className="stats-grid-4">

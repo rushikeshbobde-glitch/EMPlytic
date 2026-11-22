@@ -86,27 +86,42 @@ function Landing() {
             </div>
 
             <h1>
-              AI-Powered HR Analytics for{" "}
+              Turn Employee Data Into{" "}
               <span className="gradient-text">
-                Smarter Workforce Decisions
+                Intelligent HR Decisions
               </span>
             </h1>
 
-            <p>
-              Transform raw employee data into predictive
-              insights. Uncover attrition risks, optimize
-              performance, and identify skill gaps with
-              enterprise-grade AI analytics.
+            <p className="hero-subtitle-lead">
+              AI-powered analytics, better insights, stronger teams.
             </p>
 
-            <div className="hero-buttons">
+            {/* Feature Pills Row matching Screen 1 */}
+            <div className="hero-feature-pills-row">
+              <div className="hero-pill-item">
+                <span className="material-symbols-outlined text-blue">speed</span>
+                <span>Performance Analytics</span>
+              </div>
+              <div className="hero-pill-item">
+                <span className="material-symbols-outlined text-red">trending_down</span>
+                <span>Attrition Prediction</span>
+              </div>
+              <div className="hero-pill-item">
+                <span className="material-symbols-outlined text-purple">psychology</span>
+                <span>Skill Gap Analysis</span>
+              </div>
+              <div className="hero-pill-item">
+                <span className="material-symbols-outlined text-emerald">school</span>
+                <span>Training Recommendations</span>
+              </div>
+            </div>
 
+            <div className="hero-buttons">
               <Link
                 to="/login"
                 className="primary-button hero-button"
               >
-                Get Started
-
+                Get Started Free
                 <span className="material-symbols">
                   arrow_forward
                 </span>
@@ -114,12 +129,13 @@ function Landing() {
 
               <a
                 href="#features"
-                className="secondary-button hero-button"
+                className="secondary-button hero-button flex items-center gap-2"
               >
-                Explore Demo
+                <span className="material-symbols-outlined">play_circle</span>
+                Watch Demo
               </a>
-
             </div>
+
 
 
             {/* TRUSTED USERS */}

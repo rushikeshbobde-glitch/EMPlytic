@@ -35,14 +35,22 @@ export default function ProtectedRoute({ children, allowedRole }) {
     }
   }
 
-  // DEFAULT STRICT ISOLATION:
-  // 1. Employees can NEVER access HR/Admin pages (/hr/*, /data-upload, /data-validation, /eda, /performance, etc.)
+  // DEFAULT STRICT ISOLATION WITH INTELLIGENT EQUIVALENCE ROUTING:
+  // 1. If an employee visits general HR/Admin routes, redirect to the matching employee portal view
   if (isEmployee && !location.pathname.startsWith("/employee")) {
+    if (location.pathname.includes("/skills")) return <Navigate to="/employee/skills" replace />;
+    if (location.pathname.includes("/training")) return <Navigate to="/employee/training" replace />;
+    if (location.pathname.includes("/performance")) return <Navigate to="/employee/performance" replace />;
+    if (location.pathname.includes("/reports")) return <Navigate to="/employee/reports" replace />;
     return <Navigate to="/employee/dashboard" replace />;
   }
 
-  // 2. HR users visiting /employee routes are redirected to their HR dashboard
+  // 2. If an HR user visits /employee routes, redirect to the matching HR analytics view
   if (isHR && location.pathname.startsWith("/employee")) {
+    if (location.pathname.includes("/skills")) return <Navigate to="/skills" replace />;
+    if (location.pathname.includes("/training")) return <Navigate to="/training" replace />;
+    if (location.pathname.includes("/performance")) return <Navigate to="/performance" replace />;
+    if (location.pathname.includes("/reports")) return <Navigate to="/reports" replace />;
     return <Navigate to="/hr/dashboard" replace />;
   }
 

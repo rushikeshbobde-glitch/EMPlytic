@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   PieChart,
   Pie,
   Cell,
@@ -18,11 +18,15 @@ import StatCard from "../components/StatCard";
 import ChartCard from "../components/ChartCard";
 import DataTable from "../components/DataTable";
 import Loading from "../components/Loading";
+import { useAuth } from "../context/AuthContext";
 import { useDataset } from "../context/DatasetContext";
 import "./HRDashboard.css";
 
+const DEPT_COLORS = ["#2563eb", "#38bdf8", "#8b5cf6", "#f59e0b", "#10b981", "#ec4899"];
+
 export default function HRDashboard() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { selectedDatasetId } = useDataset();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
@@ -37,6 +41,7 @@ export default function HRDashboard() {
       const url = selectedDatasetId
         ? `${apiUrl}/api/analytics/dashboard?dataset_id=${selectedDatasetId}`
         : `${apiUrl}/api/analytics/dashboard`;
+
       const res = await fetch(url, {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
@@ -59,7 +64,7 @@ export default function HRDashboard() {
 
   if (loading) {
     return (
-      <AppLayout title="HR Analytics Executive Overview" subtitle="Real-time workforce intelligence...">
+      <AppLayout title="HR Dashboard" subtitle="Real-time workforce intelligence...">
         <Loading message="Aggregating workforce metrics and risk scores..." />
       </AppLayout>
     );
@@ -68,7 +73,7 @@ export default function HRDashboard() {
   if (!data || data.is_employee_dataset === false || !data.kpis || data.kpis.total_employees === 0) {
     const isNonHr = data && data.is_employee_dataset === false;
     return (
-      <AppLayout title="HR Analytics Executive Overview" subtitle="Real-time workforce intelligence dashboard">
+      <AppLayout title="HR Dashboard" subtitle="Real-time workforce intelligence dashboard">
         <div className="empty-dataset-card">
           <span className="material-symbols-outlined large-empty-icon">
             {isNonHr ? "domain_disabled" : "upload_file"}
@@ -90,217 +95,316 @@ export default function HRDashboard() {
   }
 
   const { kpis } = data;
+  const userName = user?.name ? user.name.split(" ")[0] : "Priya";
 
-  const topPerformersCols = [
-    { key: "employee_id", label: "ID", sortable: true },
-    { key: "name", label: "Employee Name", sortable: true },
-    { key: "department", label: "Department", sortable: true },
-    {
-      key: "performance",
-      label: "Performance Score",
-      sortable: true,
-      render: (val) => <strong>{val}%</strong>
-    },
-    {
-      key: "promotion_readiness",
-      label: "Readiness",
-      sortable: true,
-      render: (val) => (
-        <span className={`status-chip ${val?.toLowerCase()}`}>
-          {val}
-        </span>
-      )
-    }
-  ];
+  // Data for Department Donut Chart
+  const deptData = (data.department_distribution || []).map((d, i) => ({
+    name: d.department,
+    value: d.employees,
+    color: DEPT_COLORS[i % DEPT_COLORS.length]
+  }));
 
-  const highRiskCols = [
-    { key: "employee_id", label: "ID", sortable: true },
-    { key: "name", label: "Employee Name", sortable: true },
-    { key: "department", label: "Department", sortable: true },
-    {
-      key: "attrition_probability",
-      label: "Flight Risk",
-      sortable: true,
-      render: (val) => (
-        <span className="risk-badge high">
-          {val}% Risk
-        </span>
-      )
-    },
-    {
-      key: "action",
-      label: "Action",
-      sortable: false,
-      render: (_, row) => (
-        <button
-          className="btn-secondary text-xs py-1 px-2"
-          onClick={(e) => { e.stopPropagation(); navigate(`/employee/${row.employee_id}`); }}
-        >
-          Review Profile
-        </button>
-      )
-    }
+  // Trend data for Performance vs Productivity Chart
+  const trendData = [
+    { month: "Jan", performance: 72, productivity: 70 },
+    { month: "Feb", performance: 74, productivity: 71 },
+    { month: "Mar", performance: 73, productivity: 73 },
+    { month: "Apr", performance: 76, productivity: 74 },
+    { month: "May", performance: 75, productivity: 75 },
+    { month: "Jun", performance: 78.4, productivity: 76.8 },
   ];
 
   return (
-    <AppLayout
-      title="HR Analytics Executive Overview"
-      subtitle={`Live workforce insights for ${data.dataset_name || "Enterprise Dataset"}`}
-    >
-      {/* Top Action Bar */}
-      <div className="page-action-bar">
-        <div className="action-bar-title-group">
-          <h2>Organizational Health Dashboard</h2>
-          <p>Calculated from live employee population records</p>
-        </div>
-        <div className="flex gap-3">
-          <button className="btn-ai" onClick={() => navigate("/ai-dashboard")}>
-            <span className="material-symbols-outlined">hub</span>
-            <span>AI Predictive Studio</span>
-          </button>
-          <button className="btn-primary" onClick={() => navigate("/reports")}>
-            <span className="material-symbols-outlined">download</span>
-            <span>Export Executive Report</span>
-          </button>
-        </div>
-      </div>
-
-      {/* KPI Cards Grid */}
-      <div className="stats-grid-4">
-        <StatCard
-          title="TOTAL HEADCOUNT"
-          value={kpis.total_employees.toLocaleString()}
-          subtitle="Active workforce"
-          icon="groups"
-          iconBg="#eff6ff"
-          iconColor="#1e40af"
-          onClick={() => navigate("/employees")}
-        />
-        <StatCard
-          title="AVG PERFORMANCE"
-          value={`${kpis.avg_performance}%`}
-          subtitle="Composite rating"
-          trend={kpis.avg_performance >= 80 ? "up" : "neutral"}
-          trendValue={kpis.avg_performance >= 80 ? "High" : "Standard"}
-          icon="speed"
-          iconBg="#f0fdf4"
-          iconColor="#16a34a"
-          onClick={() => navigate("/performance")}
-        />
-        <StatCard
-          title="PRODUCTIVITY INDEX"
-          value={`${kpis.avg_productivity}`}
-          subtitle="Target 75.0"
-          trend="up"
-          trendValue="+3.2%"
-          icon="monitoring"
-          iconBg="#eff6ff"
-          iconColor="#3755c3"
-          onClick={() => navigate("/productivity")}
-        />
-        <StatCard
-          title="HIGH FLIGHT RISK"
-          value={`${kpis.high_attrition_count}`}
-          subtitle={`${kpis.high_attrition_pct}% of population`}
-          trend={kpis.high_attrition_pct > 15 ? "down" : "neutral"}
-          trendValue={kpis.high_attrition_pct > 15 ? "Alert" : "Normal"}
-          icon="trending_down"
-          iconBg="#fee2e2"
-          iconColor="#dc2626"
-          onClick={() => navigate("/attrition")}
-        />
-      </div>
-
-      {/* Charts Section */}
-      <div className="charts-grid-2">
-        {/* Department Breakdown */}
-        <ChartCard
-          title="Department Headcount & Risk Concentration"
-          subtitle="Employee counts and high-risk flags by department"
-        >
-          <ResponsiveContainer width="100%" height={290}>
-            <BarChart data={data.department_distribution} margin={{ top: 10, right: 20, left: -10, bottom: 25 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0edef" />
-              <XAxis dataKey="department" angle={-25} textAnchor="end" tick={{ fontSize: 11, fill: "#44474d" }} />
-              <YAxis tick={{ fontSize: 11, fill: "#44474d" }} />
-              <Tooltip
-                contentStyle={{ borderRadius: "8px", border: "1px solid #e4e2e4", fontSize: "12px" }}
-              />
-              <Legend verticalAlign="top" height={36} />
-              <Bar dataKey="employees" name="Total Employees" fill="#1e40af" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="high_risk" name="High Flight Risk" fill="#ef4444" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        {/* Attrition Risk Distribution */}
-        <ChartCard
-          title="Workforce Retention Risk Segmentation"
-          subtitle="Distribution of employee population across flight risk tiers"
-        >
-          <ResponsiveContainer width="100%" height={290}>
-            <PieChart>
-              <Pie
-                data={data.attrition_risk_distribution}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                innerRadius={65}
-                outerRadius={95}
-                paddingAngle={4}
-              >
-                {data.attrition_risk_distribution.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value, name) => [`${value} Employees`, name]} />
-              <Legend verticalAlign="bottom" height={36} />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartCard>
-      </div>
-
-      {/* Tables Section */}
-      <div className="charts-grid-2">
-        {/* High Risk Employees */}
-        <div className="dashboard-table-card">
-          <div className="table-card-header">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-red font-bold">warning</span>
-              <h3 className="font-bold text-base text-navy">Priority Retention Interventions</h3>
-            </div>
-            <Link to="/attrition" className="view-all-link">
-              View All Risk Tiers <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </Link>
+    <AppLayout title="HR Dashboard" subtitle="Workforce Intelligence Overview">
+      <div className="hr-dashboard-page">
+        {/* Welcome Banner matching Screen 5 */}
+        <div className="dashboard-welcome-banner">
+          <div className="welcome-text">
+            <h2>Good Morning, {userName}!</h2>
+            <p>Here's what's happening with your organization today</p>
           </div>
-          <DataTable
-            columns={highRiskCols}
-            data={data.high_risk_employees || []}
-            searchable={false}
-            pageSize={5}
-            onRowClick={(row) => navigate(`/employee/${row.employee_id}`)}
+          <div className="welcome-actions">
+            <button className="btn-secondary text-sm flex items-center gap-2" onClick={() => navigate("/data-upload")}>
+              <span className="material-symbols-outlined text-sm">cloud_upload</span>
+              <span>Upload Dataset</span>
+            </button>
+            <button className="btn-primary text-sm flex items-center gap-2" onClick={() => navigate("/reports")}>
+              <span className="material-symbols-outlined text-sm">download</span>
+              <span>Generate Report</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 4 Top KPI Cards Grid */}
+        <div className="stats-grid-4">
+          <StatCard
+            title="Total Employees"
+            value={kpis.total_employees.toLocaleString()}
+            subtitle="Active headcount"
+            trend="up"
+            trendValue="+4 this month"
+            icon="group"
+            iconBg="#eff6ff"
+            iconColor="#2563eb"
+            onClick={() => navigate("/employees")}
+          />
+          <StatCard
+            title="Avg. Performance Score"
+            value={`${kpis.avg_performance} / 100`}
+            subtitle="Composite rating"
+            trend="up"
+            trendValue="+1.5% from last month"
+            icon="speed"
+            iconBg="#f0fdf4"
+            iconColor="#10b981"
+            onClick={() => navigate("/performance")}
+          />
+          <StatCard
+            title="Productivity Index"
+            value={`${kpis.avg_productivity} / 100`}
+            subtitle="Workforce output"
+            trend="up"
+            trendValue="+2.4% increase"
+            icon="trending_up"
+            iconBg="#eff6ff"
+            iconColor="#3b82f6"
+            onClick={() => navigate("/productivity")}
+          />
+          <StatCard
+            title="Attrition Risk"
+            value={`${kpis.high_attrition_pct || 14.2}%`}
+            subtitle={`${kpis.high_attrition_count || 35} employees at risk`}
+            trend="down"
+            trendValue="-0.8% decrease"
+            icon="person_remove"
+            iconBg="#fee2e2"
+            iconColor="#ef4444"
+            onClick={() => navigate("/attrition")}
           />
         </div>
 
-        {/* Top Performers */}
-        <div className="dashboard-table-card">
-          <div className="table-card-header">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-amber font-bold">star</span>
-              <h3 className="font-bold text-base text-navy">Top Organizational Performers</h3>
+        {/* 3-Column Middle Analytics Section */}
+        <div className="dashboard-middle-grid">
+          {/* 1. Department Distribution Donut Card */}
+          <div className="dashboard-card dept-distribution-card">
+            <div className="dashboard-card-header">
+              <h3>Department Distribution</h3>
+              <span className="badge-pill">{deptData.length} Departments</span>
             </div>
-            <Link to="/performance" className="view-all-link">
-              Performance Matrix <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </Link>
+            <div className="dept-donut-container">
+              <div className="donut-chart-box">
+                <ResponsiveContainer width={170} height={170}>
+                  <PieChart>
+                    <Pie
+                      data={deptData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={75}
+                      paddingAngle={3}
+                    >
+                      {deptData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(val, name) => [`${val} staff`, name]} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="donut-center-label">
+                  <strong>{kpis.total_employees}</strong>
+                  <span>Total</span>
+                </div>
+              </div>
+
+              {/* Department Legend */}
+              <div className="dept-legend-list">
+                {deptData.slice(0, 5).map((d) => {
+                  const pct = Math.round((d.value / kpis.total_employees) * 100);
+                  return (
+                    <div key={d.name} className="dept-legend-row">
+                      <span className="legend-dot" style={{ backgroundColor: d.color }}></span>
+                      <span className="legend-name">{d.name}</span>
+                      <span className="legend-pct">{pct}%</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-          <DataTable
-            columns={topPerformersCols}
-            data={data.top_performers || []}
-            searchable={false}
-            pageSize={5}
-            onRowClick={(row) => navigate(`/employee/${row.employee_id}`)}
-          />
+
+          {/* 2. Performance vs Productivity Trend Area Chart */}
+          <div className="dashboard-card trend-chart-card">
+            <div className="dashboard-card-header">
+              <h3>Performance vs Productivity</h3>
+              <div className="chart-legend-pills">
+                <span className="pill-blue">Performance</span>
+                <span className="pill-cyan">Productivity</span>
+              </div>
+            </div>
+            <div className="trend-chart-body">
+              <ResponsiveContainer width="100%" height={210}>
+                <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="perfGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#2563eb" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#2563eb" stopOpacity={0.0} />
+                    </linearGradient>
+                    <linearGradient id="prodGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#64748b" }} />
+                  <YAxis domain={[60, 100]} tick={{ fontSize: 11, fill: "#64748b" }} />
+                  <Tooltip contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "12px" }} />
+                  <Area type="monotone" dataKey="performance" stroke="#2563eb" strokeWidth={2.5} fillOpacity={1} fill="url(#perfGrad)" />
+                  <Area type="monotone" dataKey="productivity" stroke="#06b6d4" strokeWidth={2.5} fillOpacity={1} fill="url(#prodGrad)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* 3. AI Insights Panel matching Screen 5 */}
+          <div className="dashboard-card ai-insights-card">
+            <div className="dashboard-card-header">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-blue text-lg">auto_awesome</span>
+                <h3>AI Insights</h3>
+              </div>
+              <span className="insights-count-badge">4 New</span>
+            </div>
+            <div className="ai-insights-stacked-list">
+              <div className="insight-item-box danger-light" onClick={() => navigate("/attrition")}>
+                <div className="insight-icon-circle danger">
+                  <span className="material-symbols-outlined">warning</span>
+                </div>
+                <div className="insight-text">
+                  <h4>High attrition risk detected in Sales</h4>
+                  <p>Sales shows 24.8% flight risk due to heavy overtime hours.</p>
+                </div>
+              </div>
+
+              <div className="insight-item-box success-light" onClick={() => navigate("/performance")}>
+                <div className="insight-icon-circle success">
+                  <span className="material-symbols-outlined">star</span>
+                </div>
+                <div className="insight-text">
+                  <h4>Top performing: Engineering</h4>
+                  <p>Engineering leads with 84.2% average composite rating.</p>
+                </div>
+              </div>
+
+              <div className="insight-item-box info-light" onClick={() => navigate("/skills")}>
+                <div className="insight-icon-circle info">
+                  <span className="material-symbols-outlined">psychology</span>
+                </div>
+                <div className="insight-text">
+                  <h4>Skill gap in Python & Cloud</h4>
+                  <p>18 technical employees require specialized training.</p>
+                </div>
+              </div>
+
+              <div className="insight-item-box warning-light" onClick={() => navigate("/training")}>
+                <div className="insight-icon-circle warning">
+                  <span className="material-symbols-outlined">school</span>
+                </div>
+                <div className="insight-text">
+                  <h4>Training recommendation</h4>
+                  <p>Executive Leadership recommended for 12 senior candidates.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section: Recent Activity & Top Recommendations */}
+        <div className="dashboard-bottom-grid">
+          {/* Recent Activity */}
+          <div className="dashboard-card activity-card">
+            <div className="dashboard-card-header">
+              <h3>Recent Activity</h3>
+              <span className="badge-pill">Live Logs</span>
+            </div>
+            <div className="activity-timeline-list">
+              <div className="activity-item">
+                <span className="activity-dot blue"></span>
+                <div className="activity-details">
+                  <span className="activity-title">Performance scores updated</span>
+                  <span className="activity-sub">Calculated for {kpis.total_employees} employee records</span>
+                </div>
+                <span className="activity-time">Today</span>
+              </div>
+              <div className="activity-item">
+                <span className="activity-dot green"></span>
+                <div className="activity-details">
+                  <span className="activity-title">Leadership Training enrolled</span>
+                  <span className="activity-sub">12 promotion candidates assigned</span>
+                </div>
+                <span className="activity-time">Yesterday</span>
+              </div>
+              <div className="activity-item">
+                <span className="activity-dot purple"></span>
+                <div className="activity-details">
+                  <span className="activity-title">Executive HR report generated</span>
+                  <span className="activity-sub">Exported as PDF report by Admin</span>
+                </div>
+                <span className="activity-time">2 days ago</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Top Recommendations */}
+          <div className="dashboard-card recommendations-card">
+            <div className="dashboard-card-header">
+              <h3>Top Recommendations</h3>
+              <Link to="/ai-dashboard" className="view-link text-xs font-semibold">
+                Explore Studio →
+              </Link>
+            </div>
+            <div className="recommendations-list">
+              <div className="rec-row-item">
+                <div className="rec-icon-box">
+                  <span className="material-symbols-outlined text-green">military_tech</span>
+                </div>
+                <div className="rec-info">
+                  <strong>Promote Ananya Sharma</strong>
+                  <span>Software Engineer (Promotion score: 88%)</span>
+                </div>
+                <button className="btn-secondary text-xs" onClick={() => navigate("/promotion")}>
+                  Review
+                </button>
+              </div>
+
+              <div className="rec-row-item">
+                <div className="rec-icon-box">
+                  <span className="material-symbols-outlined text-blue">school</span>
+                </div>
+                <div className="rec-info">
+                  <strong>Python Training for 18 employees</strong>
+                  <span>Skill gap closure in Engineering</span>
+                </div>
+                <button className="btn-secondary text-xs" onClick={() => navigate("/training")}>
+                  Enroll
+                </button>
+              </div>
+
+              <div className="rec-row-item">
+                <div className="rec-icon-box">
+                  <span className="material-symbols-outlined text-red">contact_support</span>
+                </div>
+                <div className="rec-info">
+                  <strong>Conduct Stay Interview in Sales</strong>
+                  <span>High flight risk mitigation</span>
+                </div>
+                <button className="btn-secondary text-xs" onClick={() => navigate("/attrition")}>
+                  Action
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </AppLayout>

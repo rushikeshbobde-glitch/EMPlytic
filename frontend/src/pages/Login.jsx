@@ -1,24 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./Login.css";
 
-function Login() {
+export default function Login({ defaultRole }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
 
-  const [role, setRole] = useState("hr");
-  const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState(() => {
+    if (defaultRole) {
+      return defaultRole.toLowerCase().includes("emp") ? "employee" : "hr";
+    }
+    if (location.pathname.includes("employee")) return "employee";
+    return "hr";
+  });
 
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     remember: false,
   });
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (defaultRole) {
+      setRole(defaultRole.toLowerCase().includes("emp") ? "employee" : "hr");
+    } else if (location.pathname.includes("employee")) {
+      setRole("employee");
+    } else if (location.pathname.includes("hr")) {
+      setRole("hr");
+    }
+  }, [defaultRole, location.pathname]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -26,6 +41,25 @@ function Login() {
       ...formData,
       [name]: type === "checkbox" ? checked : value,
     });
+  };
+
+  const handleFillDemo = (demoType) => {
+    if (demoType === "hr") {
+      setRole("hr");
+      setFormData({
+        email: "admin@emplytic.com",
+        password: "admin123",
+        remember: true,
+      });
+    } else {
+      setRole("employee");
+      setFormData({
+        email: "employee@emplytic.com",
+        password: "emp123",
+        remember: true,
+      });
+    }
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -41,7 +75,7 @@ function Login() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: formData.email,
+          email: formData.email.trim(),
           password: formData.password,
         }),
       });
@@ -49,7 +83,7 @@ function Login() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.detail || data.message || "Invalid email or password");
+        throw new Error(data.detail || data.message || "Invalid credentials. Please verify your email/ID and password.");
       }
 
       const roleNormalized = (data.role || role || "").toUpperCase();
@@ -73,131 +107,85 @@ function Login() {
         }
       }
     } catch (err) {
-      setError(err.message || "Unable to connect to the server.");
+      setError(err.message || "Unable to connect to the authentication server.");
     } finally {
       setLoading(false);
     }
   };
 
+  const isEmployee = role === "employee";
+
   return (
     <div className="login-page">
-      <section className="login-brand-section">
-        <div className="brand-background-glow"></div>
-        <div className="brand-dot-pattern"></div>
-
-        <div className="brand-content">
-          <Link to="/" className="login-brand">
-            <div className="login-logo">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>analytics</span>
-            </div>
-            <span>Emplytic</span>
-          </Link>
-
-          <div className="brand-hero-text">
-            <h1>
-              AI-Powered <br />
-              <span>HR Intelligence</span>
-            </h1>
-            <p>
-              Transform your workforce decision making with predictive analytics,
-              automated exploratory data analysis, and explainable machine learning models.
-            </p>
-          </div>
-
-          <div className="metric-preview-card">
-            <div className="metric-preview-header">
-              <div className="metric-tag">ACCURACY & INSIGHTS</div>
-              <span className="status-dot"></span>
-            </div>
-            <div className="metric-preview-body">
-              <div className="preview-stat">
-                <span className="stat-label">Model Accuracy</span>
-                <span className="stat-number">94.8%</span>
-              </div>
-              <div className="preview-stat">
-                <span className="stat-label">Turnover Prevention</span>
-                <span className="stat-number">3.2x</span>
-              </div>
-            </div>
-            <div className="preview-chart-mock">
-              <div className="chart-column column-1"><span>Q1</span></div>
-              <div className="chart-column column-2"><span>Q2</span></div>
-              <div className="chart-column column-3"><span>Q3</span></div>
-              <div className="chart-column column-4"><span>Q4</span></div>
-            </div>
-          </div>
-
-          <div className="floating-risk-card">
-            <div className="risk-icon">
-              <span className="material-symbols-outlined">auto_awesome</span>
-            </div>
-            <div>
-              <div className="risk-label">ATTRITION MITIGATION</div>
-              <div className="risk-value">-18.4%</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="brand-footer">
-          <span>&copy; 2026 Emplytic AI Platform</span>
-          <div>
-            <a href="#privacy">Privacy</a>
-            <a href="#terms">Terms</a>
-          </div>
-        </div>
-      </section>
-
+      {/* LEFT FORM SECTION */}
       <section className="login-form-section">
-        <div className="login-container">
-          <Link to="/" className="mobile-login-brand">
-            <div className="login-logo">
-              <span className="material-symbols-outlined">analytics</span>
+        <div className="login-card-wrapper">
+          {/* Brand Header */}
+          <Link to="/" className="login-logo-link">
+            <div className="login-brand-icon">
+              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+                analytics
+              </span>
             </div>
-            <span>Emplytic</span>
+            <span className="login-brand-name">EMPlytic</span>
           </Link>
 
-          <div className="login-header">
-            <h2>Welcome Back</h2>
-            <p>Sign in to access your workforce analytics workspace</p>
-          </div>
+          {/* Form Card */}
+          <div className="login-card-container">
+            <div className="login-header-group">
+              <h2 className="login-title">
+                {isEmployee ? "Employee Login" : (location.pathname === "/hr/login" ? "HR Login" : "Welcome Back")}
+              </h2>
+              <p className="login-subtitle">
+                {isEmployee
+                  ? "View your personal dashboard"
+                  : (location.pathname === "/hr/login"
+                    ? "Access your organization's analytics"
+                    : "Sign in to your account")}
+              </p>
+            </div>
 
-          <div className="login-card">
-            <div className="card-top-line"></div>
-
-            <div className="role-tabs">
+            {/* Role Switcher Tabs */}
+            <div className="role-switcher-tabs">
               <button
                 type="button"
-                className={role === "hr" ? "role-tab active" : "role-tab"}
-                onClick={() => setRole("hr")}
+                className={`role-tab-btn ${!isEmployee ? "active" : ""}`}
+                onClick={() => { setRole("hr"); setError(""); }}
               >
-                HR / Admin
+                HR Login
               </button>
               <button
                 type="button"
-                className={role === "employee" ? "role-tab active" : "role-tab"}
-                onClick={() => setRole("employee")}
+                className={`role-tab-btn ${isEmployee ? "active" : ""}`}
+                onClick={() => { setRole("employee"); setError(""); }}
               >
-                Employee
+                Employee Login
               </button>
             </div>
 
+            {/* Error Message */}
             {error && (
-              <div className="login-error" style={{ background: "#ffdad6", color: "#93000a", padding: "12px", borderRadius: "8px", marginBottom: "16px", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-                <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>error</span>
+              <div className="login-alert-box">
+                <span className="material-symbols-outlined">error</span>
                 <span>{error}</span>
               </div>
             )}
 
-            <form className="login-form" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="email">WORK EMAIL</label>
-                <div className="input-wrapper">
-                  <span className="material-symbols-outlined input-icon">mail</span>
+            {/* Form */}
+            <form className="login-actual-form" onSubmit={handleSubmit}>
+              <div className="login-field-group">
+                <label htmlFor="email">
+                  {isEmployee ? "Employee ID / Email" : "Email Address"}
+                </label>
+                <div className="login-input-box">
+                  <span className="material-symbols-outlined field-icon">
+                    {isEmployee ? "badge" : "mail"}
+                  </span>
                   <input
                     id="email"
                     name="email"
-                    type="email"
-                    placeholder="name@company.com"
+                    type="text"
+                    placeholder={isEmployee ? "Enter your employee ID or email" : "Enter your email"}
                     value={formData.email}
                     onChange={handleChange}
                     required
@@ -205,10 +193,10 @@ function Login() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="password">PASSWORD</label>
-                <div className="input-wrapper">
-                  <span className="material-symbols-outlined input-icon">lock</span>
+              <div className="login-field-group">
+                <label htmlFor="password">Password</label>
+                <div className="login-input-box">
+                  <span className="material-symbols-outlined field-icon">lock</span>
                   <input
                     id="password"
                     name="password"
@@ -220,7 +208,7 @@ function Login() {
                   />
                   <button
                     type="button"
-                    className="password-toggle"
+                    className="password-eye-btn"
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label="Toggle password visibility"
                   >
@@ -231,8 +219,8 @@ function Login() {
                 </div>
               </div>
 
-              <div className="login-options">
-                <label className="remember-me">
+              <div className="login-helpers-row">
+                <label className="remember-checkbox-label">
                   <input
                     type="checkbox"
                     name="remember"
@@ -241,31 +229,164 @@ function Login() {
                   />
                   <span>Remember me</span>
                 </label>
-                <a href="#forgot" onClick={(e) => { e.preventDefault(); alert("Use the demo credentials below or create a new account."); }}>
+                <a
+                  href="#forgot"
+                  className="forgot-link"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    alert("Demo Credentials:\n• HR Admin: admin@emplytic.com / admin123\n• Employee: employee@emplytic.com / emp123");
+                  }}
+                >
                   Forgot password?
                 </a>
               </div>
 
-              <button type="submit" className="login-submit" disabled={loading}>
-                {loading ? "Signing In..." : "Sign In"}
+              <button type="submit" className="login-submit-btn" disabled={loading}>
+                {loading ? "Authenticating..." : "Login"}
               </button>
             </form>
 
-            <div className="demo-credentials" style={{ marginTop: "16px", padding: "10px", background: "#f5f3f5", borderRadius: "6px", fontSize: "12px", color: "#44474d" }}>
-              <strong>Default Demo Accounts:</strong><br />
-              HR: <code>admin@emplytic.com</code> / <code>admin123</code><br />
-              Employee: <code>employee@emplytic.com</code> / <code>emp123</code>
+            {/* Quick Demo Credentials Autofill Helper */}
+            <div className="demo-fill-card">
+              <span className="demo-fill-title">Quick Demo Logins:</span>
+              <div className="demo-fill-buttons">
+                <button
+                  type="button"
+                  className="demo-pill-btn"
+                  onClick={() => handleFillDemo("hr")}
+                >
+                  <span className="material-symbols-outlined text-xs">admin_panel_settings</span>
+                  Fill HR Admin
+                </button>
+                <button
+                  type="button"
+                  className="demo-pill-btn"
+                  onClick={() => handleFillDemo("employee")}
+                >
+                  <span className="material-symbols-outlined text-xs">person</span>
+                  Fill Employee
+                </button>
+              </div>
+            </div>
+
+            {/* Back to Home & Footer Links */}
+            <div className="login-footer-links">
+              <Link to="/" className="back-home-link">
+                <span className="material-symbols-outlined text-sm">arrow_back</span>
+                <span>Back to Home</span>
+              </Link>
+              <span className="contact-admin-text">
+                Don't have an account? <a href="mailto:admin@emplytic.com">Contact your administrator</a>
+              </span>
             </div>
           </div>
+        </div>
+      </section>
 
-          <p className="register-text">
-            Don't have an account?{" "}
-            <Link to="/register">Create Account</Link>
-          </p>
+      {/* RIGHT GRAPHIC SECTION */}
+      <section className="login-graphic-section">
+        <div className="graphic-backdrop-glow"></div>
+        <div className="graphic-content-wrapper">
+          {isEmployee ? (
+            /* Employee Graphic: "Your Growth Our Priority" */
+            <div className="employee-graphic-card">
+              <div className="graphic-badge">
+                <span className="material-symbols-outlined text-sm">stars</span>
+                <span>EMPLOYEE EMPOWERMENT</span>
+              </div>
+              <h2 className="employee-graphic-title">Your Growth Our Priority</h2>
+              <p className="employee-graphic-desc">
+                Track your personal career milestones, evaluate skill proficiencies, and access curated executive upskilling pathways.
+              </p>
+              
+              {/* Graphic Mock Card */}
+              <div className="employee-metric-card">
+                <div className="metric-header-row">
+                  <div className="metric-avatar">AS</div>
+                  <div>
+                    <div className="metric-emp-name">Ananya Sharma</div>
+                    <div className="metric-emp-role">Software Engineer • Core Workforce</div>
+                  </div>
+                </div>
+                <div className="metric-bars-group">
+                  <div className="metric-single-bar">
+                    <div className="bar-labels">
+                      <span>Performance Index</span>
+                      <strong>82 / 100</strong>
+                    </div>
+                    <div className="bar-track">
+                      <div className="bar-fill green" style={{ width: "82%" }}></div>
+                    </div>
+                  </div>
+                  <div className="metric-single-bar">
+                    <div className="bar-labels">
+                      <span>Productivity Score</span>
+                      <strong>76 / 100</strong>
+                    </div>
+                    <div className="bar-track">
+                      <div className="bar-fill blue" style={{ width: "76%" }}></div>
+                    </div>
+                  </div>
+                  <div className="metric-single-bar">
+                    <div className="bar-labels">
+                      <span>Promotion Readiness</span>
+                      <strong>Ready (88%)</strong>
+                    </div>
+                    <div className="bar-track">
+                      <div className="bar-fill purple" style={{ width: "88%" }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* HR Graphic: Modern 3D Analytics & Dashboard Mockup */
+            <div className="hr-graphic-card">
+              <div className="graphic-badge">
+                <span className="material-symbols-outlined text-sm">auto_awesome</span>
+                <span>AI-POWERED WORKFORCE INTELLIGENCE</span>
+              </div>
+              <h2 className="hr-graphic-title">
+                Turn Employee Data Into <br />
+                <span className="highlight-text">Intelligent HR Decisions</span>
+              </h2>
+              <p className="hr-graphic-desc">
+                Predict attrition risks, evaluate promotion readiness, identify organizational skill gaps, and generate executive reports in one click.
+              </p>
+
+              {/* Analytics Preview Card */}
+              <div className="hr-metric-preview-box">
+                <div className="preview-top-row">
+                  <div className="kpi-mini-pill">
+                    <span className="kpi-label">TOTAL WORKFORCE</span>
+                    <strong className="kpi-val">248 Active</strong>
+                  </div>
+                  <div className="kpi-mini-pill">
+                    <span className="kpi-label">ATTRITION MITIGATION</span>
+                    <strong className="kpi-val text-green">-14.2%</strong>
+                  </div>
+                  <div className="kpi-mini-pill">
+                    <span className="kpi-label">ML MODEL ACCURACY</span>
+                    <strong className="kpi-val text-blue">94.8%</strong>
+                  </div>
+                </div>
+
+                <div className="preview-chart-visual">
+                  <div className="chart-bar-col h-40"><span>Q1</span></div>
+                  <div className="chart-bar-col h-60"><span>Q2</span></div>
+                  <div className="chart-bar-col h-75 active"><span>Q3</span></div>
+                  <div className="chart-bar-col h-90"><span>Q4</span></div>
+                </div>
+
+                <div className="preview-floating-badge">
+                  <span className="material-symbols-outlined text-blue">verified</span>
+                  <span>Supervised Random Forest Model Trained</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </div>
   );
 }
-
-export default Login;
