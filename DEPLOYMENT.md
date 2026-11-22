@@ -4,34 +4,52 @@ This guide covers deploying **EMPlytic** (FastAPI Backend + PostgreSQL Database 
 
 ---
 
-## 🚀 Option 1: Render (Recommended — 1-Click Blueprint)
+## 🚀 Option 1: Render (100% Free Tier — No Credit Card Required)
 
 Render is pre-configured via the [`render.yaml`](./render.yaml) blueprint included in this repository. It automatically spins up:
-1. **Managed PostgreSQL Database** (`emplytic-db`)
-2. **FastAPI Backend Web Service** (`emplytic-backend`)
-3. **React Frontend Static Site** (`emplytic-frontend`) with client-side routing rewrites
+1. **FastAPI Backend Web Service** (`emplytic-backend`) — Free compute instance (`plan: free`, 0.1 CPU, 512 MB RAM).
+2. **React Frontend Static Site** (`emplytic-frontend`) — Free static site hosting on Render's global CDN with client-side SPA routing rewrites.
+3. **Database** — Runs out-of-the-box on built-in SQLite with zero setup and automatic demo dataset & user seeding! *(Optional: If you want cloud PostgreSQL without paying or entering a credit card, you can use [Neon.tech](https://neon.tech) and set `DATABASE_URL` in your backend environment variables).*
 
-### Step 1: Push your code to GitHub
-1. Create a new repository on [GitHub](https://github.com/new) named `emplytic` (public or private).
-2. Push your local repository to GitHub:
+### Method A: 1-Click Blueprint (Recommended)
+1. Push your latest code to GitHub:
    ```bash
-   git branch -M main
-   git remote add origin https://github.com/<your-username>/emplytic.git
-   git push -u origin main
+   git push origin master
    ```
-
-### Step 2: Deploy on Render
-1. Go to [Render Dashboard](https://dashboard.render.com/) and sign in.
-2. Click **New +** in the top navigation bar and select **Blueprint**.
-3. Connect your GitHub account and select your `emplytic` repository.
-4. Render will read `render.yaml` and display the 3 resources:
-   - Database: `emplytic-db` (Free tier)
-   - Web Service: `emplytic-backend`
-   - Static Site: `emplytic-frontend`
-5. Click **Apply**.
-6. Render will automatically build the backend, provision the database, build the React frontend, and deploy everything live!
+2. Go to the [Render Dashboard](https://dashboard.render.com/) and sign in.
+3. Click **New +** in the top navigation bar and select **Blueprint**.
+4. Connect your GitHub account and select your `EMPlytic` repository.
+5. Render reads `render.yaml` and displays the 2 free services:
+   - Web Service: `emplytic-backend` (Free)
+   - Static Site: `emplytic-frontend` (Free)
+6. Click **Apply**. Render will deploy both services at **$0 / month with no credit card required**.
 
 > **Note on `VITE_API_URL`**: Render defaults your backend service address to `https://emplytic-backend.onrender.com`. If your backend receives a unique suffix (e.g., `https://emplytic-backend-xyz.onrender.com`), simply go to **`emplytic-frontend`** → **Environment** in the Render Dashboard, update `VITE_API_URL` with your actual backend URL, and click **Manual Deploy** → **Deploy latest commit**.
+
+### Method B: Manual Free Setup on Render (Alternative)
+If you prefer creating services manually from the Render dashboard:
+1. **Deploy Backend (Web Service):**
+   - Click **New +** → **Web Service** → Connect your repository.
+   - **Root Directory**: `backend`
+   - **Runtime**: `Python 3`
+   - **Build Command**: `pip install --upgrade pip && pip install -r requirements.txt`
+   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+   - **Instance Type**: Select **Free** ($0/mo).
+   - Under **Environment Variables**, add:
+     - `PYTHON_VERSION`: `3.11.9`
+     - `DEMO_MODE`: `true`
+     - `ALLOWED_ORIGINS`: `*`
+   - Click **Create Web Service**.
+2. **Deploy Frontend (Static Site):**
+   - Click **New +** → **Static Site** → Connect your repository.
+   - **Root Directory**: `frontend`
+   - **Build Command**: `npm install && npm run build`
+   - **Publish Directory**: `./dist`
+   - Under **Environment Variables**, add:
+     - `VITE_API_URL`: `https://<your-backend-name>.onrender.com`
+   - Under **Redirects/Rewrites**, add rewrite rule:
+     - Source: `/*` → Destination: `/index.html` → Action: `Rewrite`
+   - Click **Create Static Site**.
 
 ---
 

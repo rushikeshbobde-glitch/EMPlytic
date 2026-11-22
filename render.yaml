@@ -1,8 +1,9 @@
 services:
-  # 1. FastAPI Backend Service
+  # 1. FastAPI Backend Service (100% Free Tier - No Credit Card Required)
   - type: web
     name: emplytic-backend
     runtime: python
+    plan: free
     rootDir: backend
     buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
@@ -17,12 +18,8 @@ services:
         generateValue: true
       - key: ALLOWED_ORIGINS
         value: "*"
-      - key: DATABASE_URL
-        fromDatabase:
-          name: emplytic-db
-          property: connectionString
 
-  # 2. React Frontend Static Site
+  # 2. React Frontend Static Site (100% Free CDN Hosting)
   - type: web
     name: emplytic-frontend
     runtime: static
@@ -37,10 +34,3 @@ services:
     envVars:
       - key: VITE_API_URL
         value: https://emplytic-backend.onrender.com
-
-databases:
-  # Managed PostgreSQL Database
-  - name: emplytic-db
-    databaseName: emplytic_db
-    user: emplytic
-    plan: free
