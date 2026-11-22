@@ -66,7 +66,7 @@ def list_available_reports(
 @router.get("/pdf")
 @router.post("/pdf")
 def export_pdf(
-    report_type: str = Query("executive", enum=["executive", "performance", "attrition", "productivity", "promotion", "skill_gap"]),
+    report_type: str = Query("executive", description="Report type: executive, performance, attrition, productivity, promotion, skill_gap"),
     dataset_id: Optional[int] = None,
     current_user: User = Depends(require_hr),
     db: Session = Depends(get_db)
@@ -96,7 +96,7 @@ def export_pdf_by_id(
 @router.get("/excel")
 @router.post("/excel")
 def export_excel(
-    report_type: str = Query("executive", enum=["executive", "performance", "attrition", "productivity", "promotion", "skill_gap"]),
+    report_type: str = Query("executive", description="Report type: executive, performance, attrition, productivity, promotion, skill_gap"),
     dataset_id: Optional[int] = None,
     current_user: User = Depends(require_hr),
     db: Session = Depends(get_db)
@@ -126,7 +126,7 @@ def export_excel_by_id(
 @router.get("/html", response_class=HTMLResponse)
 @router.post("/html", response_class=HTMLResponse)
 def export_html(
-    report_type: str = Query("executive", enum=["executive", "performance", "attrition", "productivity", "promotion", "skill_gap"]),
+    report_type: str = Query("executive", description="Report type: executive, performance, attrition, productivity, promotion, skill_gap"),
     dataset_id: Optional[int] = None,
     current_user: User = Depends(require_hr),
     db: Session = Depends(get_db)
