@@ -36,10 +36,7 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: emplytic-backend
-          property: url
+        value: https://emplytic-backend.onrender.com
 
 databases:
   # Managed PostgreSQL Database

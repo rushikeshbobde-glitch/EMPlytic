@@ -31,6 +31,8 @@ Render is pre-configured via the [`render.yaml`](./render.yaml) blueprint includ
 5. Click **Apply**.
 6. Render will automatically build the backend, provision the database, build the React frontend, and deploy everything live!
 
+> **Note on `VITE_API_URL`**: Render defaults your backend service address to `https://emplytic-backend.onrender.com`. If your backend receives a unique suffix (e.g., `https://emplytic-backend-xyz.onrender.com`), simply go to **`emplytic-frontend`** → **Environment** in the Render Dashboard, update `VITE_API_URL` with your actual backend URL, and click **Manual Deploy** → **Deploy latest commit**.
+
 ---
 
 ## 🚆 Option 2: Railway
